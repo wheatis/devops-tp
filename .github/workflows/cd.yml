@@ -1,31 +1,25 @@
 name: CD Pipeline
-
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
 on:
-  workflow_run:
-    workflows: ["CI Pipeline"]
-    types:
-      - completed
+  push:
     branches:
       - main
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    #a
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Install Helm
-      uses: azure/setup-helm@v3
-      with:
-        version: 'latest'
-    
-    - name: Set up kubeconfig
-      uses: azure/k8s-set-context@v3
-      with:
-        kubeconfig: ${{ secrets.KUBE_CONFIG }}
-      
-    - name: Deploy to Kubernetes with Helm
-      run: |
-        helm upgrade --install devops-app ./helm/devops-app --namespace default
+      - uses: actions/checkout@v3
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 'latest'
+      - name: Set up kubeconfig
+        uses: azure/k8s-set-context@v3
+        with:
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+      - name: Deploy to Kubernetes with Helm
+        run: |
+          helm upgrade --install devops-app ./helm/devops-app --namespace default
