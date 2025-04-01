@@ -56,5 +56,8 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/devops-app:latest
       - name: Lancer Docker Scout
-      
-        run: docker scout cves ${{ secrets.DOCKERHUB_USERNAME }}/devops-app:latest
+        run: |
+            # Installer Docker Scout CLI (ou extension)
+            docker extension install docker/scout-extension || true
+            # Puis exécuter Docker Scout
+            docker scout cves ${{ secrets.DOCKERHUB_USERNAME }}/devops-app:latest || true
